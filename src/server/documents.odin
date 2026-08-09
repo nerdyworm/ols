@@ -216,11 +216,15 @@ document_apply_changes :: proc(
 	}
 
 	document := &document_storage.documents[uri.path]
+	if document == nil {
+		log.errorf("Client called change on a document that was never opened: %v ", uri.path)
+		return .InvalidRequest
+	}
 
 	document.version = version
 
 	if !document.client_owned {
-		log.errorf("Client called change on an document not opened: %v ", document.uri.path)
+		log.errorf("Client called change on a document that was never opened: %v ", document.uri.path)
 		return .InvalidRequest
 	}
 
