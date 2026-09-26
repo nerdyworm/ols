@@ -181,6 +181,11 @@ source_organize_imports :: proc(
 	config: ^common.Config,
 	actions: ^[dynamic]CodeAction,
 ) {
+	// A file with no package declaration has nothing to anchor imports to.
+	if document.ast.pkg_decl == nil {
+		return
+	}
+
 	removed_lines := make(map[int]struct{}, 0, context.temp_allocator)
 
 	textEdits := make_unused_import_edits(document, &removed_lines, context.temp_allocator)
